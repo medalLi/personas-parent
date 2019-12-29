@@ -1,0 +1,38 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: consumer-service
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true #开启服务拉取失败的重试机制
+##eureka 注册
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:10086/eureka
+    ## 每隔5秒向eureka拉取一次最新的服务提供方的列表
+    registry-fetch-interval-seconds: 5
+
+##指定要进行负载均衡的服务配置
+user-service:
+  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+    ConnectTimeout: 250 # Ribbon的连接超时时间
+    ReadTimeout: 1000 # Ribbon的数据读取超时时间
+    OkToRetryOnAllOperations: true # 是否对所有操作都进行重试
+    MaxAutoRetriesNextServer: 1 # 切换实例的重试次数
+    MaxAutoRetries: 1 # 对当前实例的重试次数
+##熔断设置的超时时间
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 6000 # 设置hystrix的超时时间为3000ms
+## 开启feign的熔断配置
+feign:
+  hystrix:
+    enabled: true # 开启Feign的熔断功能
